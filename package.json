@@ -1,0 +1,15 @@
+{
+  "name": "ninja-nest",
+  "version": "0.0.0",
+  "description": "NinjaBlocks Nest Driver",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Elliot Shepherd <elliot@ninjablocks.com>",
+  "license": "MIT",
+  "dependencies": {
+    "unofficial-nest-api": "git://github.com/ninjablocks/unofficial_nodejs_nest.git",
+    "prompt": "~0.2.11"
+  }
+}
