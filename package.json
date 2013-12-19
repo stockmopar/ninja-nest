@@ -8,6 +8,10 @@
   },
   "author": "Elliot Shepherd <elliot@ninjablocks.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elliots/ninja-nest"
+  },
   "dependencies": {
     "unofficial-nest-api": "git://github.com/ninjablocks/unofficial_nodejs_nest.git",
     "prompt": "~0.2.11"
