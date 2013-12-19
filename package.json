@@ -1,7 +1,7 @@
 {
   "name": "ninja-nest",
   "version": "0.0.0",
-  "description": "NinjaBlocks Nest Driver",
+  "description": "NinjaBlocks Nest Driver (Mac, Linux, Windows)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
