@@ -92,7 +92,7 @@ Driver.prototype.login = function(username, password, cb) {
         setInterval(this.fetchStatus.bind(this), this.opts.pollInterval);
 
         // and do one now too.
-        this.fetchStatus();
+        this.fetchStatus().bind(this);
 
     }.bind(this));
 };
