@@ -116,7 +116,7 @@ Driver.prototype.fetchStatus = function() {
                     this.createDevices(deviceId, data, topic);
                 }
 
-                this.opts.lastSeen[deviceId] = sharedDeviceData['$timestamp'];
+                this.opts.lastSeen[deviceId] = deviceData['$timestamp'];
                 this.save();
 
                 this.emit(topic, data);
