@@ -14,7 +14,7 @@ sudo stop ninjablock
 
 cd /opt/ninja/drivers
 
-rm -rf ninja-nest
+sudo rm -rf ninja-nest
 git clone https://github.com/stockmopar/ninja-nest.git
 cd ninja-nest
 sudo npm install
