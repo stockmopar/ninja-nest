@@ -190,6 +190,31 @@ Driver.prototype.createDevices = function(id, deviceData, topic) {
     var target = new TargetTemp();
     this.emit('register', target);
 
+	
+	
+    function CurrentHumidity() {
+        this.writable = false;
+        this.readable = true;
+        this.V = 0;
+        this.D = 8;
+        this.G = 'nestcurrent' + id;
+        this.name = 'Nest - ' + (deviceData.name||id) + ' Current Humidity';
+
+        self.on(topic, function(deviceData) {
+            self.log.debug('Nest - Device ' + id + ' - Current temperature:' + deviceData.current_humidity);
+            if (typeof deviceData.current_humidity == 'undefined') {
+                self.log.error('Nest - Device ' + id + '- ERROR: No Current Humidity!');
+            } else {
+                this.emit('data', deviceData.current_humidity);
+            }
+        }.bind(this));
+    }
+
+    util.inherits(CurrentHumidity,stream);
+
+    var humidity = new CurrentHumidity();
+    this.emit('register', humidity);
+	
 };
 
 module.exports = Driver;

@@ -1,6 +1,6 @@
 {
   "name": "ninja-nest",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "NinjaBlocks Nest Driver (Mac, Linux, Windows)",
   "main": "index.js",
   "scripts": {
