@@ -105,12 +105,13 @@ Driver.prototype.fetchStatus = function() {
     nest.fetchStatus(function (data) {
 		
         for (var deviceId in data.device) {
-
-            if(deviceId != "getName"){
+			var deviceData = data.shared[deviceId];
+			console.log(deviceData + " - " + typeof deviceData);
+			
+            if(typeof deviceData != "function"){
 				console.log(data);
 				console.log(deviceId + " - " + typeof deviceId);
-				var deviceData = data.shared[deviceId];
-				console.log(deviceData);
+				
 				
 				force = 1;
 				if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp'] || force) {
