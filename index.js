@@ -118,14 +118,14 @@ Driver.prototype.fetchStatus = function() {
                 if (!this.listeners(topic).length) {
                     this.log.info('Nest - Creating Ninja devices for device: ' + deviceId);
 
-                    this.createDevices(deviceId, data, topic);
+                    this.createDevices(deviceId, data, topic).bind(this);
                 }
 
                 this.opts.lastSeen[deviceId] = deviceData['$timestamp'];
                 this.save();
 
-                this.emit(topic, data);
 				this.log.info("(Nest) Fetching Status - Emitting Topic");
+				this.emit(topic, data);
             }else{
 				this.log.info("(Nest) Fetching Status - Did not emit topic. (LastSeen=" + this.opts.lastSeen[deviceId] + ") < ($timestamp=" + deviceData['$timestamp'] + ")");
 			}
