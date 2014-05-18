@@ -97,7 +97,7 @@ Driver.prototype.login = function(username, password, cb) {
 Driver.prototype.fetchStatus = function() {
 
     nest.fetchStatus(function (data) {
-
+		console.log(data);
         for (var deviceId in data.shared) {
             var deviceData = data.shared[deviceId];
 
