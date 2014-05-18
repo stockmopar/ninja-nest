@@ -281,6 +281,38 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
 
     var heater = new HeaterState();
 	this.emit('register', heater);
+	
+	function ACState() {
+        this.writable = false;
+        this.readable = true;
+        this.V = 0;
+        this.D = 238;
+        this.G = 'nestacstate' + id;
+        this.name = 'Nest - ' + (deviceData.name||id) + ' A/C State';
+
+        self.on(topic, function(data) {
+			self.log.info("(Nest) A/C State - Topic was triggered");
+			var deviceData = data.shared[id];
+			
+            self.log.debug('Nest - Device ' + id + ' - A/C State:' + deviceData.hvac_ac_state);
+            if (typeof deviceData.hvac_ac_state == 'undefined') {
+                self.log.error('Nest - Device ' + id + '- ERROR: No Current A/C State!');
+            } else {
+				self.log.info("(Nest) A/C State - " + deviceData.hvac_ac_state);
+				
+				if(deviceData.hvac_ac_state){
+					this.emit('data', '1');
+				}else{
+					this.emit('data', '0');
+				}
+			}
+        }.bind(this));
+    }
+
+    util.inherits(ACState,stream);
+
+    var ac = new ACState();
+	this.emit('register', ac);
 };
 
 module.exports = Driver;
