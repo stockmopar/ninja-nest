@@ -254,7 +254,7 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
         this.writable = false;
         this.readable = true;
         this.V = 0;
-        this.D = 238;
+        this.D = 244;
         this.G = 'nestheaterstate' + id;
         this.name = 'Nest - ' + (deviceData.name||id) + ' Heater State';
 
