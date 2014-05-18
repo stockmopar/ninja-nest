@@ -143,14 +143,14 @@ Driver.prototype.createDevices = function(id, data, topic) {
         this.name = 'Nest - ' + (deviceData.name||id) + ' Current Temperature';
 
         self.on(topic, function(data) {
-			this.log("(Nest) CurrentTemp - Topic was triggered");
+			this.log.info("(Nest) CurrentTemp - Topic was triggered");
 			var deviceData = data.shared[id];
 			
             self.log.debug('Nest - Device ' + id + ' - Current temperature:' + deviceData.current_temperature);
             if (typeof deviceData.current_temperature == 'undefined') {
                 self.log.error('Nest - Device ' + id + '- ERROR: No Current Temperature!');
             } else {
-				this.log("(Nest) CurrentTemp - " + deviceData.current_temperature);
+				this.log.info("(Nest) CurrentTemp - " + deviceData.current_temperature);
                 this.emit('data', deviceData.current_temperature);
             }
         }.bind(this));
@@ -170,13 +170,13 @@ Driver.prototype.createDevices = function(id, data, topic) {
         this.name = 'Nest - ' + (deviceData.name||id) + ' Target Temperature';
 
         self.on(topic, function(data) {
-			this.log("(Nest) TargetTemp - Topic was triggered");
+			this.log.info("(Nest) TargetTemp - Topic was triggered");
 			var deviceData = data.shared[id];
             self.log.debug('Nest - Device ' + id + ' - Target temperature:' + deviceData.target_temperature);
              if (typeof deviceData.target_temperature == 'undefined') {
                 self.log.error('Nest - Device ' + id + '- ERROR: No Target Temperature!');
             } else {
-				this.log("(Nest) TargetTemp - " + deviceData.target_temperature);
+				this.log.info("(Nest) TargetTemp - " + deviceData.target_temperature);
                 this.emit('data', deviceData.target_temperature);
             }
         }.bind(this));
@@ -216,14 +216,14 @@ Driver.prototype.createDevices = function(id, data, topic) {
         this.name = 'Nest - ' + (deviceData.name||id) + ' Current Humidity';
 
         self.on(topic, function(data) {
-			this.log("(Nest) CurrentHumidity - Topic was triggered");
+			this.log.info("(Nest) CurrentHumidity - Topic was triggered");
 			var extraDeviceData = data.device[id];
 			
             self.log.debug('Nest - Device ' + id + ' - Current humidity:' + extraDeviceData.current_humidity);
             if (typeof extraDeviceData.current_humidity == 'undefined') {
                 self.log.error('Nest - Device ' + id + '- ERROR: No Current Humidity!');
             } else {
-				this.log("(Nest) CurrentHumidity - " + extraDeviceData.current_humidity);
+				this.log.info("(Nest) CurrentHumidity - " + extraDeviceData.current_humidity);
                 this.emit('data', extraDeviceData.current_humidity);
             }
         }.bind(this));
