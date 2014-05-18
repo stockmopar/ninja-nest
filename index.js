@@ -197,7 +197,7 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
 
             if (typeof wdata == 'string') {
                 try {
-                    data = parseFloat(wdata);
+                    wdata = parseFloat(wdata);
                 } catch(e) {}
             }
 
