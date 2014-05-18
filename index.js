@@ -99,6 +99,7 @@ Driver.prototype.login = function(username, password, cb) {
 };
 
 Driver.prototype.fetchStatus = function() {
+	console.log(this);
 	this.log("(Nest) Fetching Status");
 	
     nest.fetchStatus(function (data) {
