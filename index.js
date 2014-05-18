@@ -106,11 +106,11 @@ Driver.prototype.fetchStatus = function() {
 		
         for (var deviceId in data.device) {
 			var deviceData = data.shared[deviceId];
-			console.log(deviceData + " - " + typeof deviceData);
+			//console.log(deviceData + " - " + typeof deviceData);
 			
-            if(typeof deviceData != "function"){
-				console.log(data);
-				console.log(deviceId + " - " + typeof deviceId);
+            if (data.device.hasOwnProperty(deviceId)) {
+				//console.log(data);
+				//console.log(deviceId + " - " + typeof deviceId);
 				
 				
 				force = 1;
