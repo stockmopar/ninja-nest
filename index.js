@@ -263,7 +263,7 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
 			var deviceData = data.shared[id];
 			
             self.log.debug('Nest - Device ' + id + ' - Heater State:' + deviceData.hvac_heater_state);
-            if (typeof extraDeviceData.hvac_heater_state == 'undefined') {
+            if (typeof deviceData.hvac_heater_state == 'undefined') {
                 self.log.error('Nest - Device ' + id + '- ERROR: No Current Heater State!');
             } else {
 				self.log.info("(Nest) Heater State - " + deviceData.hvac_heater_state);
