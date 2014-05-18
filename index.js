@@ -89,11 +89,11 @@ Driver.prototype.login = function(username, password, cb) {
         }
 
         // Start continuous polling..
-		setTimeout(this.fetchStatus.bind(this), 1);
+		//setTimeout(this.fetchStatus.bind(this), 1);
         setInterval(this.fetchStatus.bind(this), this.opts.pollInterval);
 
         // and do one now too.
-        //this.fetchStatus().bind(this);
+        this.fetchStatus();
 
     }.bind(this));
 };
@@ -106,8 +106,9 @@ Driver.prototype.fetchStatus = function() {
 		
         for (var deviceId in data.device) {
 			console.log(data);
-			console.log(typeof deviceId);
+			console.log(deviceId + " - " + typeof deviceId);
             var deviceData = data.shared[deviceId];
+			console.log(deviceData);
 			
 			force = 1;
             if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp'] || force) {
