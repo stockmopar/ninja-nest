@@ -14,6 +14,8 @@ function Driver(opts, app) {
 
   this.opts = opts;
 
+  //this.app = app;
+  
   opts.lastSeen = opts.lastSeen || {};
   opts.pollInterval = opts.pollInterval || 120000; // 2min default poll
 
@@ -76,7 +78,8 @@ Driver.prototype.config = function(rpc,cb) {
 Driver.prototype.login = function(username, password, cb) {
 
     nest.login(username, password, function (err, data) {
-        this.log.info('Nest - Logged in ' + JSON.stringify(data));
+        //this.log.info('Nest - Logged in ' + JSON.stringify(data));
+		this.log.info('Nest - Logged in');
         if (cb) {
             cb(err, data);
         }
@@ -95,35 +98,40 @@ Driver.prototype.login = function(username, password, cb) {
 };
 
 Driver.prototype.fetchStatus = function() {
-
+	this.log("(Nest) Fetching Status");
+	
     nest.fetchStatus(function (data) {
 		// console.log(data);
         for (var deviceId in data.device) {
-            var deviceData = data.device[deviceId];
-
+            var deviceData = data.shared[deviceId];
+			
             if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp']) {
 
                 var topic = 'data.' + deviceId;
                 if (!this.listeners(topic).length) {
                     this.log.info('Nest - Creating Ninja devices for device: ' + deviceId);
 
-                    this.createDevices(deviceId, deviceData, topic);
+                    this.createDevices(deviceId, data, topic);
                 }
 
-                this.opts.lastSeen[deviceId] = deviceData['$timestamp'];
+                this.opts.lastSeen[deviceId] = sharedDeviceData['$timestamp'];
                 this.save();
 
-                this.emit(topic, deviceData);
+                this.emit(topic, data);
+				this.log("(Nest) Fetching Status - Emitting Topic");
             }
         }
 
     }.bind(this));
 };
 
-Driver.prototype.createDevices = function(id, deviceData, topic) {
+Driver.prototype.createDevices = function(id, data, topic) {
 
     var self = this;
 
+	var deviceData = data.shared[id];
+	var extraDeviceData = data.device[id];
+	
     function CurrentTemp() {
         this.writable = false;
         this.readable = true;
@@ -132,11 +140,15 @@ Driver.prototype.createDevices = function(id, deviceData, topic) {
         this.G = 'nestcurrent' + id;
         this.name = 'Nest - ' + (deviceData.name||id) + ' Current Temperature';
 
-        self.on(topic, function(deviceData) {
+        self.on(topic, function(data) {
+			this.log("(Nest) CurrentTemp - Topic was triggered");
+			var deviceData = data.shared[id];
+			
             self.log.debug('Nest - Device ' + id + ' - Current temperature:' + deviceData.current_temperature);
             if (typeof deviceData.current_temperature == 'undefined') {
                 self.log.error('Nest - Device ' + id + '- ERROR: No Current Temperature!');
             } else {
+				this.log("(Nest) CurrentTemp - " + deviceData.current_temperature);
                 this.emit('data', deviceData.current_temperature);
             }
         }.bind(this));
@@ -155,30 +167,33 @@ Driver.prototype.createDevices = function(id, deviceData, topic) {
         this.G = 'nesttarget' + id;
         this.name = 'Nest - ' + (deviceData.name||id) + ' Target Temperature';
 
-        self.on(topic, function(deviceData) {
+        self.on(topic, function(data) {
+			this.log("(Nest) TargetTemp - Topic was triggered");
+			var deviceData = data.shared[id];
             self.log.debug('Nest - Device ' + id + ' - Target temperature:' + deviceData.target_temperature);
              if (typeof deviceData.target_temperature == 'undefined') {
                 self.log.error('Nest - Device ' + id + '- ERROR: No Target Temperature!');
             } else {
+				this.log("(Nest) TargetTemp - " + deviceData.target_temperature);
                 this.emit('data', deviceData.target_temperature);
             }
         }.bind(this));
 
-        this.write = function(data) {
+        this.write = function(wdata) {
 
-            if (typeof data == 'string') {
+            if (typeof wdata == 'string') {
                 try {
-                    data = parseFloat(data);
+                    data = parseFloat(wdata);
                 } catch(e) {}
             }
 
-            if (typeof data != 'number' || isNaN(data) ) {
-                self.log.error('Nest - Device ' + id + ' - Tried to set target temperature with a non-number : ' + data);
+            if (typeof wdata != 'number' || isNaN(wdata) ) {
+                self.log.error('Nest - Device ' + id + ' - Tried to set target temperature with a non-number : ' + wdata);
                 return;
             }
 
-            self.log.info('Nest - Device ' + id + ' - Setting target temperature to :' + data);
-            nest.setTemperature(id, data, function(response) {
+            self.log.info('Nest - Device ' + id + ' - Setting target temperature to :' + wdata);
+            nest.setTemperature(id, wdata, function(response) {
                 console.log('response', response);
                 self.fetchStatus();
             });
@@ -190,8 +205,6 @@ Driver.prototype.createDevices = function(id, deviceData, topic) {
     var target = new TargetTemp();
     this.emit('register', target);
 
-	
-	
     function CurrentHumidity() {
         this.writable = false;
         this.readable = true;
@@ -200,12 +213,16 @@ Driver.prototype.createDevices = function(id, deviceData, topic) {
         this.G = 'nestcurrent' + id;
         this.name = 'Nest - ' + (deviceData.name||id) + ' Current Humidity';
 
-        self.on(topic, function(deviceData) {
-            self.log.debug('Nest - Device ' + id + ' - Current humidity:' + deviceData.current_humidity);
-            if (typeof deviceData.current_humidity == 'undefined') {
+        self.on(topic, function(data) {
+			this.log("(Nest) CurrentHumidity - Topic was triggered");
+			var extraDeviceData = data.device[id];
+			
+            self.log.debug('Nest - Device ' + id + ' - Current humidity:' + extraDeviceData.current_humidity);
+            if (typeof extraDeviceData.current_humidity == 'undefined') {
                 self.log.error('Nest - Device ' + id + '- ERROR: No Current Humidity!');
             } else {
-                this.emit('data', deviceData.current_humidity);
+				this.log("(Nest) CurrentHumidity - " + extraDeviceData.current_humidity);
+                this.emit('data', extraDeviceData.current_humidity);
             }
         }.bind(this));
     }
