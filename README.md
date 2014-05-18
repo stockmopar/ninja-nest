@@ -4,8 +4,21 @@
 ###Overview
 Exports any Nest Thermostats as NinjaBlocks devices.
 
-Currently each Nest Thermometer will appear as two temperature devices, Current and Target. Humidity device is also present now. The Target device can be actuated with a Celsius temperature.
+Currently each Nest Thermometer will create the following devices:
+- Current Temperature
+- Current Humidity
+- Target Temperature
+- Heater State
+- A/C State
 
+The Target device can be actuated with a Celsius temperature.
+
+This device currently does not work in range mode.  I plan to read which mode it is in and output the following devices if it is in this mode
+- Low Target Temperature
+- Hight Target Temperature
+
+The Target Temperature device would then be hidden.
+ 
 ###Installation
 
 ```sh
@@ -27,7 +40,9 @@ sudo start ninjablock
 
 v0.0.1
 
-- Added Humidity
+- Added Current Humidity
+- Added Heater State
+- Added A/C State
 
 v0.0.0
 
