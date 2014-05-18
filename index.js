@@ -250,8 +250,6 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
     var humidity = new CurrentHumidity();
     this.emit('register', humidity);
 	
-	/*
-	
 	function HeaterState() {
         this.writable = false;
         this.readable = true;
@@ -277,8 +275,6 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
     util.inherits(HeaterState,stream);
 
     var heater = new HeaterState();
-    this.emit('register', heater);
-	*/
 };
 
 module.exports = Driver;
