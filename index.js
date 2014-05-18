@@ -103,8 +103,10 @@ Driver.prototype.fetchStatus = function() {
 	this.log.info("(Nest) Fetching Status");
 	
     nest.fetchStatus(function (data) {
-		console.log(data);
+		
         for (var deviceId in data.device) {
+			console.log(data);
+			console.log(typeof deviceid);
             var deviceData = data.shared[deviceId];
 			
 			force = 1;
@@ -243,6 +245,35 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
     var humidity = new CurrentHumidity();
     this.emit('register', humidity);
 	
+	/*
+	
+	function HeaterState() {
+        this.writable = false;
+        this.readable = true;
+        this.V = 0;
+        this.D = 238;
+        this.G = 'nestheaterstate' + id;
+        this.name = 'Nest - ' + (deviceData.name||id) + ' Heater State';
+
+        self.on(topic, function(data) {
+			self.log.info("(Nest) Heater State - Topic was triggered");
+			var deviceData = data.shared[id];
+			
+            self.log.debug('Nest - Device ' + id + ' - Heater State:' + deviceData.hvac_heater_state);
+            if (typeof extraDeviceData.hvac_heater_state == 'undefined') {
+                self.log.error('Nest - Device ' + id + '- ERROR: No Current Heater State!');
+            } else {
+				self.log.info("(Nest) Heater State - " + deviceData.hvac_heater_state);
+                this.emit('data', deviceData.hvac_heater_state);
+            }
+        }.bind(this));
+    }
+
+    util.inherits(HeaterState,stream);
+
+    var heater = new HeaterState();
+    this.emit('register', heater);
+	*/
 };
 
 module.exports = Driver;
