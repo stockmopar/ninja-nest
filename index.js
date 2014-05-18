@@ -267,6 +267,7 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
                 self.log.error('Nest - Device ' + id + '- ERROR: No Current Heater State!');
             } else {
 				self.log.info("(Nest) Heater State - " + deviceData.hvac_heater_state);
+				
 				if(deviceData.hvac_heater_state){
 					this.emit('data', '1');
 				}else{
@@ -279,6 +280,7 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
     util.inherits(HeaterState,stream);
 
     var heater = new HeaterState();
+	this.emit('register', heater);
 };
 
 module.exports = Driver;
