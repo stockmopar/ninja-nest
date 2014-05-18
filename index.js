@@ -97,9 +97,9 @@ Driver.prototype.login = function(username, password, cb) {
 Driver.prototype.fetchStatus = function() {
 
     nest.fetchStatus(function (data) {
-		console.log(data);
-        for (var deviceId in data.shared) {
-            var deviceData = data.shared[deviceId];
+		// console.log(data);
+        for (var deviceId in data.device) {
+            var deviceData = data.device[deviceId];
 
             if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp']) {
 
@@ -201,7 +201,7 @@ Driver.prototype.createDevices = function(id, deviceData, topic) {
         this.name = 'Nest - ' + (deviceData.name||id) + ' Current Humidity';
 
         self.on(topic, function(deviceData) {
-            self.log.debug('Nest - Device ' + id + ' - Current temperature:' + deviceData.current_humidity);
+            self.log.debug('Nest - Device ' + id + ' - Current humidity:' + deviceData.current_humidity);
             if (typeof deviceData.current_humidity == 'undefined') {
                 self.log.error('Nest - Device ' + id + '- ERROR: No Current Humidity!');
             } else {
