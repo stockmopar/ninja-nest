@@ -89,10 +89,11 @@ Driver.prototype.login = function(username, password, cb) {
         }
 
         // Start continuous polling..
+		setTimeout(this.fetchStatus.bind(this), 1);
         setInterval(this.fetchStatus.bind(this), this.opts.pollInterval);
 
         // and do one now too.
-        this.fetchStatus().bind(this);
+        //this.fetchStatus().bind(this);
 
     }.bind(this));
 };
