@@ -79,12 +79,12 @@ Driver.prototype.login = function(username, password, cb) {
 
     nest.login(username, password, function (err, data) {
         //this.log.info('Nest - Logged in ' + JSON.stringify(data));
-		this.log.info('Nest - Logged in');
+		this.log.info('(Nest) Logged in');
         if (cb) {
             cb(err, data);
         }
         if (err) {
-            this.log.info('Nest - Failed to log in - ', err.message);
+            this.log.info('(Nest) Failed to log in - ', err.message);
             return;
         }
 
@@ -107,8 +107,13 @@ Driver.prototype.fetchStatus = function() {
         for (var deviceId in data.device) {
             var deviceData = data.shared[deviceId];
 			
-            if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp']) {
-
+			force = 1;
+            if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp'] || force) {
+				if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp']) {
+					
+				}else{
+					this.log.info("(Nest) Fetching Status - Only went through because of force. (LastSeen=" + this.opts.lastSeen[deviceId] + ") < ($timestamp=" + deviceData['$timestamp'] + ")");
+				}
                 var topic = 'data.' + deviceId;
                 if (!this.listeners(topic).length) {
                     this.log.info('Nest - Creating Ninja devices for device: ' + deviceId);
@@ -120,8 +125,10 @@ Driver.prototype.fetchStatus = function() {
                 this.save();
 
                 this.emit(topic, data);
-				this.log("(Nest) Fetching Status - Emitting Topic");
-            }
+				this.log.info("(Nest) Fetching Status - Emitting Topic");
+            }else{
+				this.log.info("(Nest) Fetching Status - Did not emit topic. (LastSeen=" + this.opts.lastSeen[deviceId] + ") < ($timestamp=" + deviceData['$timestamp'] + ")");
+			}
         }
 
     }.bind(this));
