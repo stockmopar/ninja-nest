@@ -105,32 +105,35 @@ Driver.prototype.fetchStatus = function() {
     nest.fetchStatus(function (data) {
 		
         for (var deviceId in data.device) {
-			console.log(data);
-			console.log(deviceId + " - " + typeof deviceId);
-            var deviceData = data.shared[deviceId];
-			console.log(deviceData);
-			
-			force = 1;
-            if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp'] || force) {
-				if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp']) {
-					
+
+            if(deviceId != "getName"){
+				console.log(data);
+				console.log(deviceId + " - " + typeof deviceId);
+				var deviceData = data.shared[deviceId];
+				console.log(deviceData);
+				
+				force = 1;
+				if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp'] || force) {
+					if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp']) {
+						
+					}else{
+						this.log.info("(Nest) Fetching Status - Only went through because of force. (LastSeen=" + this.opts.lastSeen[deviceId] + ") < ($timestamp=" + deviceData['$timestamp'] + ")");
+					}
+					var topic = 'data.' + deviceId;
+					if (!this.listeners(topic).length) {
+						this.log.info('Nest - Creating Ninja devices for device: ' + deviceId);
+
+						this.createDevices(this.app, deviceId, data, topic);
+					}
+
+					this.opts.lastSeen[deviceId] = deviceData['$timestamp'];
+					this.save();
+
+					this.log.info("(Nest) Fetching Status - Emitting Topic");
+					this.emit(topic, data);
 				}else{
-					this.log.info("(Nest) Fetching Status - Only went through because of force. (LastSeen=" + this.opts.lastSeen[deviceId] + ") < ($timestamp=" + deviceData['$timestamp'] + ")");
+					this.log.info("(Nest) Fetching Status - Did not emit topic. (LastSeen=" + this.opts.lastSeen[deviceId] + ") < ($timestamp=" + deviceData['$timestamp'] + ")");
 				}
-                var topic = 'data.' + deviceId;
-                if (!this.listeners(topic).length) {
-                    this.log.info('Nest - Creating Ninja devices for device: ' + deviceId);
-
-                    this.createDevices(this.app, deviceId, data, topic);
-                }
-
-                this.opts.lastSeen[deviceId] = deviceData['$timestamp'];
-                this.save();
-
-				this.log.info("(Nest) Fetching Status - Emitting Topic");
-				this.emit(topic, data);
-            }else{
-				this.log.info("(Nest) Fetching Status - Did not emit topic. (LastSeen=" + this.opts.lastSeen[deviceId] + ") < ($timestamp=" + deviceData['$timestamp'] + ")");
 			}
         }
 
