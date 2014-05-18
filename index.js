@@ -106,7 +106,7 @@ Driver.prototype.fetchStatus = function() {
 		
         for (var deviceId in data.device) {
 			console.log(data);
-			console.log(typeof deviceid);
+			console.log(typeof deviceId);
             var deviceData = data.shared[deviceId];
 			
 			force = 1;
