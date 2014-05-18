@@ -103,7 +103,7 @@ Driver.prototype.fetchStatus = function() {
 	this.log.info("(Nest) Fetching Status");
 	
     nest.fetchStatus(function (data) {
-		// console.log(data);
+		console.log(data);
         for (var deviceId in data.device) {
             var deviceData = data.shared[deviceId];
 			
