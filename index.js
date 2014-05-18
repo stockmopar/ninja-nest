@@ -118,7 +118,7 @@ Driver.prototype.fetchStatus = function() {
                 if (!this.listeners(topic).length) {
                     this.log.info('Nest - Creating Ninja devices for device: ' + deviceId);
 
-                    this.createDevices(deviceId, data, topic).bind(this);
+                    this.createDevices(this.app, deviceId, data, topic);
                 }
 
                 this.opts.lastSeen[deviceId] = deviceData['$timestamp'];
@@ -134,7 +134,9 @@ Driver.prototype.fetchStatus = function() {
     }.bind(this));
 };
 
-Driver.prototype.createDevices = function(id, data, topic) {
+Driver.prototype.createDevices = function(app, id, data, topic) {
+
+	app.log.info("(Nest) Creating Devices");
 
     var self = this;
 
