@@ -289,6 +289,65 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
 
     var ac = new ACState();
 	this.emit('register', ac);
+	
+	function FanState() {
+        this.writable = true;
+        this.readable = true;
+        this.V = 0;
+        this.D = 238;
+        this.G = 'nestfanstate' + id;
+        this.name = 'Nest - ' + (deviceData.name||id) + ' Fan State';
+
+        self.on(topic, function(data) {
+			var deviceData = data.shared[id];
+			
+            self.log.debug('Nest - Device ' + id + ' - Fan State:' + deviceData.hvac_fan_state);
+            if (typeof deviceData.hvac_fan_state == 'undefined') {
+                self.log.error('Nest - Device ' + id + '- ERROR: No Current Fan State!');
+            } else {
+				self.log.info("(Nest) Fan State - " + deviceData.hvac_fan_state);
+				this.emit('data', deviceData.hvac_fan_state);
+				//if(deviceData.hvac_ac_state){
+				//	this.emit('data', '1');
+				//}else{
+				//	this.emit('data', '0');
+				//}
+			}
+        }.bind(this));
+        this.write = function(wdata) {
+			self.log(wdata + " and type: " + typeof wdata);
+			/*
+            if (typeof wdata == 'string') {
+                try {
+                    wdata = value == 'true';
+                } catch(e) {}
+            }
+			*/
+
+            if (typeof wdata != 'boolean' ) {
+                self.log.error('Nest - Device ' + id + ' - Tried to set fan state with a non-boolean : ' + wdata);
+                return;
+            }
+			
+			if(wdata == true){
+				fanMode = "on";
+			}else{
+				fanMode = "auto";
+			}
+			
+            self.log.info('Nest - Device ' + id + ' - Setting fan state to :' + fanMode);
+            
+			nest.setFanMode(id, fanMode, function(response) {
+                console.log('response', response);
+                self.fetchStatus();
+            });
+        };
+    }
+
+    util.inherits(FanState,stream);
+
+    var fan = new FanState();
+	this.emit('register', fan);
 };
 
 module.exports = Driver;
