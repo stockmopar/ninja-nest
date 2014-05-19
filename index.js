@@ -16,7 +16,6 @@ function Driver(opts, app) {
 
   this.app = app;
   
-  opts.lastSeen = opts.lastSeen || {};
   opts.pollInterval = opts.pollInterval || 120000; // 2min default poll
 
   app.once('client::up',function(){
@@ -99,50 +98,32 @@ Driver.prototype.login = function(username, password, cb) {
 };
 
 Driver.prototype.fetchStatus = function() {
-	//console.log(this);
 	this.log.info("(Nest) Fetching Status");
 	
     nest.fetchStatus(function (data) {
 		
         for (var deviceId in data.device) {
 			var deviceData = data.shared[deviceId];
-			//console.log(deviceData + " - " + typeof deviceData);
 			
             if (data.device.hasOwnProperty(deviceId)) {
-				//console.log(data);
-				//console.log(deviceId + " - " + typeof deviceId);
-				
-				
-				force = 1;
-				if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp'] || force) {
-					if (!this.opts.lastSeen[deviceId] || this.opts.lastSeen[deviceId] < deviceData['$timestamp']) {
-						
-					}else{
-						this.log.info("(Nest) Fetching Status - Only went through because of force. (LastSeen=" + this.opts.lastSeen[deviceId] + ") < ($timestamp=" + deviceData['$timestamp'] + ")");
-					}
-					var topic = 'data.' + deviceId;
-					if (!this.listeners(topic).length) {
-						this.log.info('Nest - Creating Ninja devices for device: ' + deviceId);
+				var topic = 'data.' + deviceId;
+				if (!this.listeners(topic).length) {
+					this.log.info('Nest - Creating Ninja devices for device: ' + deviceId);
 
-						this.createDevices(this.app, deviceId, data, topic);
-					}
-
-					this.opts.lastSeen[deviceId] = deviceData['$timestamp'];
-					this.save();
-
-					this.log.info("(Nest) Fetching Status - Emitting Topic");
-					this.emit(topic, data);
-				}else{
-					this.log.info("(Nest) Fetching Status - Did not emit topic. (LastSeen=" + this.opts.lastSeen[deviceId] + ") < ($timestamp=" + deviceData['$timestamp'] + ")");
+					this.createDevices(this.app, deviceId, data, topic);
 				}
+
+				this.save();
+
+				this.log.info("(Nest) Fetching Status - Emitting Topic");
+				this.emit(topic, data);
 			}
         }
-
+		
     }.bind(this));
 };
 
 Driver.prototype.createDevices = function(app, id, data, topic) {
-
 	app.log.info("(Nest) Creating Devices");
 
     var self = this;
@@ -159,7 +140,6 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
         this.name = 'Nest - ' + (deviceData.name||id) + ' Current Temperature';
 
         self.on(topic, function(data) {
-			self.log.info("(Nest) CurrentTemp - Topic was triggered");
 			var deviceData = data.shared[id];
 			
             self.log.debug('Nest - Device ' + id + ' - Current temperature:' + deviceData.current_temperature);
@@ -186,7 +166,6 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
         this.name = 'Nest - ' + (deviceData.name||id) + ' Target Temperature';
 
         self.on(topic, function(data) {
-			self.log.info("(Nest) TargetTemp - Topic was triggered");
 			var deviceData = data.shared[id];
             self.log.debug('Nest - Device ' + id + ' - Target temperature:' + deviceData.target_temperature);
              if (typeof deviceData.target_temperature == 'undefined') {
@@ -222,7 +201,7 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
 
     var target = new TargetTemp();
     this.emit('register', target);
-
+	
     function CurrentHumidity() {
         this.writable = false;
         this.readable = true;
@@ -232,7 +211,6 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
         this.name = 'Nest - ' + (deviceData.name||id) + ' Current Humidity';
 
         self.on(topic, function(data) {
-			self.log.info("(Nest) CurrentHumidity - Topic was triggered");
 			var extraDeviceData = data.device[id];
 			
             self.log.debug('Nest - Device ' + id + ' - Current humidity:' + extraDeviceData.current_humidity);
@@ -259,7 +237,6 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
         this.name = 'Nest - ' + (deviceData.name||id) + ' Heater State';
 
         self.on(topic, function(data) {
-			self.log.info("(Nest) Heater State - Topic was triggered");
 			var deviceData = data.shared[id];
 			
             self.log.debug('Nest - Device ' + id + ' - Heater State:' + deviceData.hvac_heater_state);
@@ -267,12 +244,12 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
                 self.log.error('Nest - Device ' + id + '- ERROR: No Current Heater State!');
             } else {
 				self.log.info("(Nest) Heater State - " + deviceData.hvac_heater_state);
-				
-				if(deviceData.hvac_heater_state){
-					this.emit('data', '1');
-				}else{
-					this.emit('data', '0');
-				}
+				this.emit('data', deviceData.hvac_heater_state);
+				//if(deviceData.hvac_heater_state){
+				//	this.emit('data', '1');
+				//}else{
+				//	this.emit('data', '0');
+				//}
 			}
         }.bind(this));
     }
@@ -291,7 +268,6 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
         this.name = 'Nest - ' + (deviceData.name||id) + ' A/C State';
 
         self.on(topic, function(data) {
-			self.log.info("(Nest) A/C State - Topic was triggered");
 			var deviceData = data.shared[id];
 			
             self.log.debug('Nest - Device ' + id + ' - A/C State:' + deviceData.hvac_ac_state);
@@ -299,12 +275,12 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
                 self.log.error('Nest - Device ' + id + '- ERROR: No Current A/C State!');
             } else {
 				self.log.info("(Nest) A/C State - " + deviceData.hvac_ac_state);
-				
-				if(deviceData.hvac_ac_state){
-					this.emit('data', '1');
-				}else{
-					this.emit('data', '0');
-				}
+				this.emit('data', deviceData.hvac_ac_state);
+				//if(deviceData.hvac_ac_state){
+				//	this.emit('data', '1');
+				//}else{
+				//	this.emit('data', '0');
+				//}
 			}
         }.bind(this));
     }
