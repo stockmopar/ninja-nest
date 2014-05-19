@@ -315,7 +315,7 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
 			}
         }.bind(this));
         this.write = function(wdata) {
-			self.log(wdata + " and type: " + typeof wdata);
+			self.log.info(wdata + " and type: " + typeof wdata);
 			/*
             if (typeof wdata == 'string') {
                 try {
