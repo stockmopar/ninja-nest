@@ -315,19 +315,6 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
 			}
         }.bind(this));
         this.write = function(wdata) {
-			self.log.info(wdata + " and type: " + typeof wdata);
-			/*
-            if (typeof wdata == 'string') {
-                try {
-                    wdata = value == 'true';
-                } catch(e) {}
-            }
-			*/
-
-            if (typeof wdata != 'boolean' ) {
-                self.log.error('Nest - Device ' + id + ' - Tried to set fan state with a non-boolean : ' + wdata);
-                return;
-            }
 			
 			if(wdata == true){
 				fanMode = "on";
