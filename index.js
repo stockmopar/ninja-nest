@@ -317,17 +317,12 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
         this.write = function(wdata) {
 			
 			if(wdata == true){
-				fanMode = "on";
+				nest.setFanModeOn();
 			}else{
-				fanMode = "auto";
+				nest.setFanModeAuto();
 			}
 			
-            self.log.info('Nest - Device ' + id + ' - Setting fan state to :' + fanMode);
-            
-			nest.setFanMode(id, fanMode, function(response) {
-                console.log('response', response);
-                self.fetchStatus();
-            });
+            self.log.info('Nest - Device ' + id + ' - Setting fan state to :' + wdata);
         };
     }
 
