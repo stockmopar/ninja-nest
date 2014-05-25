@@ -189,9 +189,13 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
                 self.log.error('Nest - Device ' + id + ' - Tried to set target temperature with a non-number : ' + wdata);
                 return;
             }
-
+			
+			console.log(typeof id + " - " id);
+			
             self.log.info('Nest - Device ' + id + ' - Setting target temperature to :' + wdata);
-            nest.setTemperature(id, wdata);
+            nest.fetchStatus(function (data) {
+				nest.setTemperature(id, wdata);
+			}
         };
     }
 
