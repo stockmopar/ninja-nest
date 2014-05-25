@@ -177,7 +177,7 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
         }.bind(this));
 
         this.write = function(wdata) {
-
+			console.log("Received data to set temperature to: " + wdata);
             if (typeof wdata == 'string') {
                 try {
                     wdata = parseFloat(wdata);
@@ -190,10 +190,7 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
             }
 
             self.log.info('Nest - Device ' + id + ' - Setting target temperature to :' + wdata);
-            nest.setTemperature(id, wdata, function(response) {
-                console.log('response', response);
-                self.fetchStatus();
-            });
+            nest.setTemperature(id, wdata);
         };
     }
 
