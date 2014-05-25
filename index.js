@@ -190,7 +190,7 @@ Driver.prototype.createDevices = function(app, id, data, topic) {
                 return;
             }
 			
-			console.log(typeof id + " - " id);
+			console.log(typeof id + " - " + id);
 			
             self.log.info('Nest - Device ' + id + ' - Setting target temperature to :' + wdata);
             nest.fetchStatus(function (data) {
